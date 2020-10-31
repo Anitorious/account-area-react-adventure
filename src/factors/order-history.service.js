@@ -51,6 +51,7 @@ function getOrdinal(numeral) {
 
 const formattedDateTimeExpression = /([A-Za-z]+)\s(\d+),\s(\d{4,})/;
 
+// N.B Date Time Formatting without moment.js 🎉
 function formatDateTime(dateTime) {
   const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
     month: 'long',
@@ -65,6 +66,7 @@ function formatDateTime(dateTime) {
   return date.replace(formattedDateTimeExpression, `$1 $2${ordinal} $3`);
 }
 
+// N.B Sketching out some object shapes in JSDoc for future reference. Would usually do this in TypeScript.
 /**
  * OrderItem
  * @typedef {Object} OrderItem
@@ -74,7 +76,6 @@ function formatDateTime(dateTime) {
  * @property {string} price - The aggregate item total
  *
  */
-
 /**
  * Order
  * @typedef {Object} Order

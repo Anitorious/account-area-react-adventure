@@ -86,8 +86,73 @@ function formatDateTime(dateTime) {
  * @property {string} deliveryAddress
  */
 
+const variantExpressionMap = {
+  2: /(?<product>\w+\s(?<type>[\w-]+))\s(?<variant>\w+)/,
+  3: /(?<product>\w+\s\w+)\s(?<variant>\w+)/
+};
+function computeDescriptors(title, variantTitle) {
+  if (!Boolean(variantTitle) || !parseInt(variantTitle))
+    return { product: title, variant: variantTitle };
+
+  const matches = title.match(variantExpressionMap[variantTitle]);
+
+  return {
+    product: matches.groups.product,
+    variant: `${matches.groups.type ? `${matches.groups.type} ` : ''}${
+      matches.groups.variant
+    }`
+  };
+}
+
+// N.B This is where it gets a little crazy.
+//  Group line items via sku prefix, convert the object to an array and map the values back for a second reducer pass.
+//  Build OrderItems DTO by reducing aggregated items to compute titles, variants, quantities and total price.
+//  This is a potential candidate for optimisation, although my preference would be to start at the source and modify the API to return a sanitised data object,
+//  the server being a more predictable and controllable environment for heavy data manipulation. Perhaps WebAssembly could help here if server-side sanitisation
+//  isn't possible?
 function aggregateLineItems(lineItems) {
-  return [];
+  const _lineItems = Object.entries(
+    lineItems.reduce((rv, item) => {
+      const sku = item['sku'].split('-')[0];
+      (rv[sku] = rv[sku] || []).push(item);
+      return rv;
+    }, {})
+  ).map(x => x[1]);
+
+  const orderItems = _lineItems.reduce((rv, lineItem) => {
+    const { id, image } = lineItem[0];
+    const dto = {
+      id: id,
+      thumbnailUrl: image
+    };
+
+    const variants = lineItem.map(item => {
+      const { title, variant_title, quantity } = item;
+      const descriptors = computeDescriptors(title, variant_title);
+
+      return {
+        product: descriptors.product,
+        variant: `${quantity}x ${
+          Boolean(descriptors.variant)
+            ? descriptors.variant
+            : descriptors.product
+        }`
+      };
+    });
+
+    dto.name = variants[0].product;
+    dto.descriptor = variants.map(x => x.variant).join(', ');
+    dto.price = lineItem
+      .reduce(
+        (rv, item) => rv + parseFloat(item.price) * parseInt(item.quantity),
+        0
+      )
+      .toFixed(2);
+
+    return [...rv, dto];
+  }, []);
+
+  return orderItems;
 }
 
 /**

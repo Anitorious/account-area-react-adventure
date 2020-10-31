@@ -1,5 +1,26 @@
 import React from 'react';
 
+const OrderHistoryLineItem = ({ item }) => {
+  return (
+    <div className="column is-6">
+      <div className="media">
+        <div className="media-left">
+          <img alt="Product bars" className="image" src={item.thumbnailUrl} />
+        </div>
+        <div className="media-content">
+          <div>
+            <p className="product-title">{item.name}</p>
+            <p className="product-variants">{item.descriptor}</p>
+          </div>
+        </div>
+        <div className="media-right">
+          <p className="product-price">${item.price}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const OrderHistoryItem = ({ order }) => {
   return (
     <div className="column is-12">
@@ -41,26 +62,7 @@ const OrderHistoryItem = ({ order }) => {
             <div className="order-information-expanded">
               <div className="product-list-boxes columns is-multiline">
                 {order.orderItems.map(item => (
-                  <div className="column is-6">
-                    <div className="media">
-                      <div className="media-left">
-                        <img
-                          alt="Product bars"
-                          className="image"
-                          src="https://cdn.shopify.com/s/files/1/0578/1097/products/HUEL_SHAKER_FROSTER_FR_1200.jpg?v=1515319444"
-                        />
-                      </div>
-                      <div className="media-content">
-                        <div>
-                          <p className="product-title">{item.name}</p>
-                          <p className="product-variants">{item.descriptor}</p>
-                        </div>
-                      </div>
-                      <div className="media-right">
-                        <p className="product-price">${item.price}</p>
-                      </div>
-                    </div>
-                  </div>
+                  <OrderHistoryLineItem key={item.id} item={item} />
                 ))}
               </div>
               <hr />

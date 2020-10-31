@@ -9,7 +9,6 @@ import {
 export async function fetchOrderHistory() {
   const response = await request();
   const json = await response.json();
-  console.log(json);
   return transform(json);
 }
 

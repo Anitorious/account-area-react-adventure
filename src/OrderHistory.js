@@ -19,7 +19,6 @@ const OrderHistory = () => {
         const response = await fetchOrderHistory();
         setOrders(response);
       } catch (error) {
-        console.log(error);
         switch (error.name) {
           case ERROR_REGISTER.NETWORK_FAILURE:
             setErrorCode(ERROR_CODES.NETWORK_FAILURE);

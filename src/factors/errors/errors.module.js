@@ -12,8 +12,13 @@ export const ERROR_MESSAGES = {
     'Internal Server Exception: An issue occurred while processing this request.'
 };
 
-export const ERROR_REGISTER = {
+export const ERROR_REGISTRY = {
   NETWORK_FAILURE: 'NetworkFailureError',
   CLIENT_REQUEST: 'ClientRequestError',
   INTERNAL_SERVER: 'InternalServerError'
 };
+
+// N.B. instanceof may not function as expected depending on transpiler and/or transpiler version.
+export function isCustomErrorHandler(error) {
+  return error.name && Object.values(ERROR_REGISTRY).includes(error.name);
+}

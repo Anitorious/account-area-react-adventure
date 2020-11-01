@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PageHeader from './PageHeader';
 import OrderHistoryItem from './OrderHistoryItem';
-import { ERROR_MESSAGES, ERROR_REGISTER } from './factors/errors/errors.module';
-import { fetchOrderHistory } from './factors/order-history.service';
+import { ERROR_REGISTRY } from './factors/errors/errors.module';
+import OrderHistoryService from './factors/order-history.service';
 
 const ERROR_CODES = {
   NETWORK_FAILURE: 0,
@@ -16,11 +16,12 @@ const OrderHistory = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetchOrderHistory();
+        const response = await OrderHistoryService.get();
         setOrders(response);
       } catch (error) {
+        console.log(error);
         switch (error.name) {
-          case ERROR_REGISTER.NETWORK_FAILURE:
+          case ERROR_REGISTRY.NETWORK_FAILURE:
             setErrorCode(ERROR_CODES.NETWORK_FAILURE);
             break;
           default:

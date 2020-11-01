@@ -71,7 +71,7 @@ function computeDescriptors(title, variantTitle) {
  * @return { import("./order-history.ontology").OrderItem[] } An array of purchase items.
  */
 function lineItemsToAggregate(lineItems) {
-  const _lineItems = Object.values(
+  const model = Object.values(
     lineItems.reduce((rv, item) => {
       const sku = item['sku'].split('-')[0];
       (rv[sku] = rv[sku] || []).push(item);
@@ -79,7 +79,7 @@ function lineItemsToAggregate(lineItems) {
     }, {})
   );
 
-  const orderItems = _lineItems.reduce((rv, lineItem) => {
+  return model.reduce((rv, lineItem) => {
     const { id, image } = lineItem[0];
     const dto = {
       id: id,
@@ -111,8 +111,6 @@ function lineItemsToAggregate(lineItems) {
 
     return [...rv, dto];
   }, []);
-
-  return orderItems;
 }
 
 /**

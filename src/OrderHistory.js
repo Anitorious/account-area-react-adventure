@@ -11,6 +11,7 @@ const ERROR_CODES = {
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState(null);
+  // N.B Preference would be to use a state-machine to power the UI, but given the task is relatively small and simple, didn't think it necessary.
   const [errorCode, setErrorCode] = useState(-1);
 
   useEffect(() => {
